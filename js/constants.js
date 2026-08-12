@@ -1,4 +1,4 @@
-const events = [
+export const events = [
   {
     id: 1,
     name: "Justice World Tour",
@@ -73,55 +73,3 @@ const events = [
     },
   },
 ];
-
-const printEventDetails = (event) => {
-  const { id, name, artist, date, venue = "TBD" } = event;
-
-  return `#${id} - ${name} by ${artist} will take place on ${date} at ${venue}.`;
-};
-
-// find()
-const travisScottEvent = events.find(
-  (event) => event.artist === "Travis Scott",
-);
-
-console.log("Found Event:");
-console.log(printEventDetails(travisScottEvent));
-
-// filter()
-const newDelhiConcerts = events.filter((event) => event.city === "New Delhi");
-
-console.log("\nNew Delhi Concerts:");
-newDelhiConcerts.forEach((event) => console.log(printEventDetails(event)));
-
-// sort()
-const sortedEvents = [...events].sort((a, b) => a.date.localeCompare(b.date));
-
-console.log("\nEvents Sorted by Date:");
-sortedEvents.forEach((event) => console.log(printEventDetails(event)));
-
-// map()
-const eventNames = events.map((event) => `${event.artist} - ${event.name}`);
-
-console.log("\nEvent Names:");
-console.log(eventNames);
-
-// reduce()
-const eventStatistics = events.reduce(
-  (stats, event) => {
-    stats.totalEvents++;
-
-    if (event.soldOut) {
-      stats.soldOutEvents++;
-    }
-
-    return stats;
-  },
-  {
-    totalEvents: 0,
-    soldOutEvents: 0,
-  },
-);
-
-console.log("\nStatistics:");
-console.log(eventStatistics);
