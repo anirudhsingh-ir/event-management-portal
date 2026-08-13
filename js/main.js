@@ -1,35 +1,19 @@
-import {
-  getTravisScottEvent,
-  getNewDelhiConcerts,
-  getSortedEvents,
-  getEventNames,
-  getEventStatistics,
-} from "./api.js";
+import { fetchEvents } from "./api.js";
+import { formatEventsList } from "./helpers.js";
+import { displayEvents } from "./ui.js";
 
-import {
-  displayFoundEvent,
-  displayNewDelhiConcerts,
-  displaySortedEvents,
-  displayEventNames,
-  displayEventStatistics,
-} from "./ui.js";
+const App = async () => {
+  try {
+    const data = await fetchEvents({ city: "New York", sort: "" });
+    const rawEvents = data?._embedded?.events || [];
 
-// find()
-const travisScottEvent = getTravisScottEvent();
-displayFoundEvent(travisScottEvent);
+    const cleanEvents = formatEventsList(rawEvents);
 
-// filter()
-const newDelhiConcerts = getNewDelhiConcerts();
-displayNewDelhiConcerts(newDelhiConcerts);
+    displayEvents(cleanEvents);
+  } catch (error) {
+    console.error("Failed to load events:", error.message);
+  }
+};
 
-// sort()
-const sortedEvents = getSortedEvents();
-displaySortedEvents(sortedEvents);
-
-// map()
-const eventNames = getEventNames();
-displayEventNames(eventNames);
-
-// reduce()
-const eventStatistics = getEventStatistics();
-displayEventStatistics(eventStatistics);
+// Initialize App
+App();
