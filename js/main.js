@@ -4,7 +4,7 @@ import { displayEvents } from "./ui.js";
 
 const App = async () => {
   try {
-    const data = await fetchEvents({ city: "New York", sort: "" });
+    const data = await fetchEvents({ city: "Berlin", sort: "" });
     const rawEvents = data?._embedded?.events || [];
 
     const cleanEvents = formatEventsList(rawEvents);
