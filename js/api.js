@@ -1,30 +1,30 @@
-import { events } from "./constants.js";
+import { API_KEY } from "../config.js";
+import { baseUrl } from "./constants.js";
 
-export const getTravisScottEvent = () =>
-  events.find((event) => event.artist === "Travis Scott");
+export const fetchEvents = async (params = {}) => {
+  const url = new URL(`${baseUrl}/events`);
+  url.searchParams.append("apikey", API_KEY);
 
-export const getNewDelhiConcerts = () =>
-  events.filter((event) => event.city === "New Delhi");
+  Object.entries(params).forEach(([key, value]) => {
+    const cleanValue = value?.toString()?.trim();
+    if (value !== null && value !== undefined && cleanValue !== "") {
+      url.searchParams.append(key, cleanValue);
+    }
+  });
 
-export const getSortedEvents = () =>
-  [...events].sort((a, b) => a.date.localeCompare(b.date));
+  const response = await fetch(url);
 
-export const getEventNames = () =>
-  events.map((event) => `${event.artist} - ${event.name}`);
+  if (!response.ok) {
+    let errorMessage = `HTTP Error ${response.status}: ${response.statusText}`;
+    try {
+      const errorData = await response.json();
+      errorMessage =
+        errorData.fault?.faultstring || errorData.message || errorMessage;
+    } catch {
+      // JSON parsing failed, rely on HTTP status string
+    }
+    throw new Error(errorMessage);
+  }
 
-export const getEventStatistics = () =>
-  events.reduce(
-    (stats, event) => {
-      stats.totalEvents++;
-
-      if (event.soldOut) {
-        stats.soldOutEvents++;
-      }
-
-      return stats;
-    },
-    {
-      totalEvents: 0,
-      soldOutEvents: 0,
-    },
-  );
+  return response.json();
+};

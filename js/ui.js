@@ -1,26 +1,17 @@
-import { printEventDetails } from "./helpers.js";
+export const displayEvents = (events) => {
+  if (!events.length) {
+    console.log("No events found.");
+    return;
+  }
 
-export const displayFoundEvent = (event) => {
-  console.log("Found Event:");
-  console.log(printEventDetails(event));
-};
+  console.log(`\n=== UPCOMING EVENTS (${events.length}) ===\n`);
 
-export const displayNewDelhiConcerts = (concerts) => {
-  console.log("\nNew Delhi Concerts:");
-  concerts.forEach((event) => console.log(printEventDetails(event)));
-};
-
-export const displaySortedEvents = (events) => {
-  console.log("\nEvents Sorted by Date:");
-  events.forEach((event) => console.log(printEventDetails(event)));
-};
-
-export const displayEventNames = (names) => {
-  console.log("\nEvent Names:");
-  console.log(names);
-};
-
-export const displayEventStatistics = (stats) => {
-  console.log("\nStatistics:");
-  console.log(stats);
+  events.forEach((event, index) => {
+    console.log(`${index + 1}. ${event.name}`);
+    console.log(`   📅 Date:   ${event.date} at ${event.time}`);
+    console.log(`   📍 Venue:  ${event.venue} (${event.city})`);
+    console.log(`   🏷️  Status: ${event.status}`);
+    console.log(`   🔗 Link:   ${event.url}`);
+    console.log(`--------------------------------------------------`);
+  });
 };
