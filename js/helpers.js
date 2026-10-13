@@ -3,7 +3,7 @@ export const formatEventData = (event) => {
     id: event.id,
     name: event.name,
     url: event.url,
-    image: event.images?.[10]?.url ?? "",
+    image: (event.images?.find(img => img.ratio === "16_9" && img.width >= 640) ?? event.images?.[0])?.url ?? "",
     date: event.dates?.start?.localDate ?? "",
     time: event.dates?.start?.localTime ?? "",
     status: event.dates?.status?.code ?? "",
