@@ -12,6 +12,38 @@
       <h1>Event management portal</h1>
     </header>
     <main>
+      <div class="controls-bar">
+        <div class="controls-search-group">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search events by keyword..." />
+          <button id="searchButton" class="search-button">Search</button>
+        </div>
+        <div class="controls-filter-group">
+          <div class="filter-field">
+            <label class="filter-label" for="categoryFilter">Category</label>
+            <select id="categoryFilter" class="filter-select">
+              <option value="">All</option>
+              <option value="Music">Music</option>
+              <option value="Sports">Sports</option>
+              <option value="Arts & Theatre">Arts &amp; Theatre</option>
+              <option value="Film">Film</option>
+              <option value="Miscellaneous">Miscellaneous</option>
+            </select>
+          </div>
+          <div class="filter-divider"></div>
+          <div class="filter-field">
+            <label class="filter-label" for="sortSelect">Sort by</label>
+            <select id="sortSelect" class="filter-select">
+              <option value="">Default</option>
+              <option value="date,asc">Date (Soonest)</option>
+              <option value="date,desc">Date (Latest)</option>
+              <option value="name,asc">Name (A-Z)</option>
+              <option value="name,desc">Name (Z-A)</option>
+              <option value="relevance,desc">Relevance</option>
+            </select>
+          </div>
+        </div>
+      </div>
       <div id="events" class="events-grid"></div>
     </main>
     <script src="./js/main.js" type="module"></script>
