@@ -1,73 +1,87 @@
 import { fetchEvents } from "./api.js";
-import { formatEventsList } from "./helpers.js";
-import { displayEvents, showLoading, showError } from "./ui.js";
+import { transformEvents } from "./eventTransformer.js";
+import { renderEvents, renderLoading, renderError } from "./ui.js";
+import { ELEMENT_IDS } from "./constants.js";
 
 let currentRequestId = 0;
 
-const setControlsLoading = (isLoading) => {
-  const searchButton = document.getElementById("searchButton");
+const setSearchLoading = (searchButton, isLoading) => {
   if (searchButton) {
     searchButton.disabled = isLoading;
   }
 };
 
-const loadEvents = async (keyword = "", category = "", sort = "") => {
+const loadEvents = async (
+  elements,
+  { keyword = "", category = "", sort = "" } = {}
+) => {
   const requestId = ++currentRequestId;
-  showLoading();
-  setControlsLoading(true);
+  const isStale = () => requestId !== currentRequestId;
+
+  renderLoading();
+  setSearchLoading(elements.searchButton, true);
 
   try {
-    const params = { city: "Berlin" };
-    if (keyword) params.keyword = keyword;
-    if (category) params.segmentName = category;
-    if (sort) params.sort = sort;
+    const params = {
+      ...(keyword && { keyword }),
+      ...(category && { segmentName: category }),
+      ...(sort && { sort }),
+    };
 
     const data = await fetchEvents(params);
 
-    // Ignore response if a newer request has been triggered
-    if (requestId !== currentRequestId) return;
+    if (isStale()) return;
 
     const rawEvents = data?._embedded?.events || [];
-    const cleanEvents = formatEventsList(rawEvents);
+    const cleanEvents = transformEvents(rawEvents);
 
-    displayEvents(cleanEvents);
+    renderEvents(cleanEvents);
   } catch (error) {
-    if (requestId !== currentRequestId) return;
+    if (isStale()) return;
 
     console.error("Failed to load events:", error.message);
-    showError("Failed to load events. Please check your connection and try again.", () => {
-      loadEvents(keyword, category, sort);
-    });
+    renderError(
+      "Failed to load events. Please check your connection and try again.",
+      () => {
+        loadEvents(elements, { keyword, category, sort });
+      }
+    );
   } finally {
-    if (requestId === currentRequestId) {
-      setControlsLoading(false);
+    if (!isStale()) {
+      setSearchLoading(elements.searchButton, false);
     }
   }
 };
 
-const App = () => {
-  const searchInput    = document.getElementById("searchInput");
-  const searchButton   = document.getElementById("searchButton");
-  const categoryFilter = document.getElementById("categoryFilter");
-  const sortSelect     = document.getElementById("sortSelect");
-
-  const triggerLoad = () => {
-    loadEvents(searchInput.value, categoryFilter.value, sortSelect.value);
+const initApp = () => {
+  const elements = {
+    searchInput: document.getElementById(ELEMENT_IDS.SEARCH_INPUT),
+    searchButton: document.getElementById(ELEMENT_IDS.SEARCH_BUTTON),
+    categoryFilter: document.getElementById(ELEMENT_IDS.CATEGORY_FILTER),
+    sortSelect: document.getElementById(ELEMENT_IDS.SORT_SELECT),
   };
 
-  searchButton.addEventListener("click", triggerLoad);
+  const triggerLoad = () => {
+    loadEvents(elements, {
+      keyword: elements.searchInput?.value.trim() ?? "",
+      category: elements.categoryFilter?.value ?? "",
+      sort: elements.sortSelect?.value ?? "",
+    });
+  };
 
-  searchInput.addEventListener("keypress", (e) => {
+  elements.searchButton?.addEventListener("click", triggerLoad);
+
+  elements.searchInput?.addEventListener("keypress", (e) => {
     if (e.key === "Enter") triggerLoad();
   });
 
   // Filters apply immediately on change
-  categoryFilter.addEventListener("change", triggerLoad);
-  sortSelect.addEventListener("change", triggerLoad);
+  elements.categoryFilter?.addEventListener("change", triggerLoad);
+  elements.sortSelect?.addEventListener("change", triggerLoad);
 
   // Initial load
-  loadEvents();
+  loadEvents(elements);
 };
 
 // Initialize App
-App();
+initApp();

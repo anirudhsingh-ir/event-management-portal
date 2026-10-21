@@ -1,8 +1,8 @@
 import { API_KEY } from "../config.js";
-import { baseUrl } from "./constants.js";
+import { API_BASE_URL, API_ENDPOINTS } from "./constants.js";
 
 export const fetchEvents = async (params = {}) => {
-  const url = new URL(`${baseUrl}/events`);
+  const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.EVENTS}`);
   url.searchParams.append("apikey", API_KEY);
 
   Object.entries(params).forEach(([key, value]) => {
